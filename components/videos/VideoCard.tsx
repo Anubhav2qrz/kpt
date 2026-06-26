@@ -3,6 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import type { Video } from "@/lib/types";
 
 const CATEGORY_LABELS: Record<string, string> = {
+  class9: "Class 9",
+  class10: "Class 10",
   class11: "Class 11",
   class12: "Class 12",
   jee: "JEE",
@@ -10,6 +12,8 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
+  class9: "bg-violet-600/20 text-violet-400 border-violet-600/30",
+  class10: "bg-cyan-600/20 text-cyan-400 border-cyan-600/30",
   class11: "bg-blue-600/20 text-blue-400 border-blue-600/30",
   class12: "bg-indigo-600/20 text-indigo-400 border-indigo-600/30",
   jee: "bg-orange-600/20 text-orange-400 border-orange-600/30",
@@ -33,7 +37,7 @@ export function VideoCard({ video, onPlay }: Props) {
       onKeyDown={(e) => e.key === "Enter" && onPlay()}
     >
       {/* Thumbnail */}
-      <div className="relative aspect-video overflow-hidden bg-[#080f2a]">
+      <div className="relative aspect-video overflow-hidden" style={{ backgroundColor: "var(--kpt-surface)" }}>
         <img
           src={thumbnail}
           alt={video.title}
@@ -59,10 +63,10 @@ export function VideoCard({ video, onPlay }: Props) {
       </div>
       {/* Title */}
       <div className="p-4">
-        <h3 className="text-white font-semibold text-sm leading-snug group-hover:text-blue-300 transition-colors line-clamp-2">
+        <h3 className="font-semibold text-sm leading-snug group-hover:text-blue-300 transition-colors line-clamp-2" style={{ color: "var(--kpt-text)" }}>
           {video.title}
         </h3>
-        <p className="text-[#7a8dbe] text-xs mt-2">
+        <p className="text-xs mt-2" style={{ color: "var(--kpt-muted)" }}>
           {new Date(video.created_at).toLocaleDateString("en-IN", {
             day: "numeric",
             month: "short",

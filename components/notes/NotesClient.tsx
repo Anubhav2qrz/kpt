@@ -67,8 +67,8 @@ export function NotesClient({ initialNotes, initialCategory }: Props) {
       ) : notes.length === 0 ? (
         <div className="text-center py-24 glass-card rounded-2xl">
           <FileText className="w-16 h-16 text-blue-600/30 mx-auto mb-4" />
-          <p className="text-white font-semibold mb-2">No notes available yet</p>
-          <p className="text-[#7a8dbe] text-sm">Check back soon!</p>
+          <p className="font-semibold mb-2" style={{ color: "var(--kpt-text)" }}>No notes available yet</p>
+          <p className="text-sm" style={{ color: "var(--kpt-muted)" }}>Check back soon!</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -101,8 +101,8 @@ function NoteCard({ note }: { note: Note }) {
           <span className={`text-xs font-semibold px-2 py-1 rounded-full border ${meta.color} mb-2 inline-block`}>
             {meta.label}
           </span>
-          <h3 className="text-white font-semibold text-sm leading-snug">{note.title}</h3>
-          <p className="text-[#7a8dbe] text-xs mt-1">
+          <h3 className="font-semibold text-sm leading-snug" style={{ color: "var(--kpt-text)" }}>{note.title}</h3>
+          <p className="text-xs mt-1" style={{ color: "var(--kpt-muted)" }}>
             {new Date(note.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
           </p>
         </div>

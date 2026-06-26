@@ -13,7 +13,7 @@ export function StatsBar() {
           {stats.map((stat, i) => (
             <div key={i} className="text-center">
               <div className="stat-number mb-2">{stat.value}</div>
-              <div className="text-[#7a8dbe] text-sm font-medium">{stat.label}</div>
+              <div className="text-sm font-medium" style={{ color: "var(--kpt-muted)" }}>{stat.label}</div>
             </div>
           ))}
         </div>

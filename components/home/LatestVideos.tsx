@@ -22,7 +22,7 @@ export function LatestVideos({ videos }: Props) {
             <div className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">
               📹 Latest Uploads
             </div>
-            <h2 className="text-4xl font-black text-white" style={{ fontFamily: "Outfit" }}>
+            <h2 className="text-4xl font-black" style={{ fontFamily: "Outfit", color: "var(--kpt-text)" }}>
               Latest <span className="gradient-text-blue">Video Lectures</span>
             </h2>
           </div>
@@ -37,7 +37,7 @@ export function LatestVideos({ videos }: Props) {
         {videos.length === 0 ? (
           <div className="text-center py-20 glass-card">
             <Play className="w-16 h-16 text-blue-600/30 mx-auto mb-4" />
-            <p className="text-[#7a8dbe]">No videos yet. Check back soon!</p>
+            <p style={{ color: "var(--kpt-muted)" }}>No videos yet. Check back soon!</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

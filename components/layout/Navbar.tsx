@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, Atom } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/components/layout/ThemeProvider";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -19,6 +20,7 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -29,13 +31,26 @@ export function Navbar() {
   // Don't show public navbar on admin pages
   if (pathname?.startsWith("/admin")) return null;
 
+  const isDark = theme === "dark";
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#080f2a]/95 backdrop-blur-xl shadow-lg shadow-blue-900/20 border-b border-blue-900/20"
+          ? "backdrop-blur-xl shadow-lg border-b"
           : "bg-transparent"
       }`}
+      style={
+        scrolled
+          ? {
+              backgroundColor: "var(--kpt-nav-bg)",
+              borderColor: "var(--kpt-border)",
+              boxShadow: isDark
+                ? "0 4px 24px rgba(0,0,0,0.7)"
+                : "0 4px 24px rgba(37,99,235,0.1)",
+            }
+          : {}
+      }
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
@@ -45,7 +60,10 @@ export function Navbar() {
               <Image src="/logo.jpg" alt="KPT Logo" fill sizes="40px" className="object-cover" />
             </div>
             <div className="flex flex-col leading-none">
-              <span className="font-black text-lg text-white tracking-tight" style={{ fontFamily: "Outfit" }}>
+              <span
+                className="font-black text-lg tracking-tight"
+                style={{ fontFamily: "Outfit", color: "var(--kpt-text)" }}
+              >
                 KISHORE <span className="text-orange-500">PLUS</span>
               </span>
               <span className="text-[10px] text-blue-400 tracking-[0.2em] uppercase">
@@ -63,16 +81,55 @@ export function Navbar() {
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   pathname === link.href
                     ? "bg-blue-600/20 text-blue-400 shadow-inner"
-                    : "text-[#7a8dbe] hover:text-white hover:bg-white/5"
+                    : "hover:bg-white/5"
                 }`}
+                style={
+                  pathname !== link.href
+                    ? { color: "var(--kpt-muted)" }
+                    : {}
+                }
+                onMouseEnter={(e) => {
+                  if (pathname !== link.href) {
+                    (e.target as HTMLElement).style.color = "var(--kpt-text)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (pathname !== link.href) {
+                    (e.target as HTMLElement).style.color = "var(--kpt-muted)";
+                  }
+                }}
               >
                 {link.label}
               </Link>
             ))}
           </div>
 
-          {/* CTA */}
+          {/* CTA + Theme Toggle */}
           <div className="hidden md:flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle dark/light mode"
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300 border"
+              style={{
+                backgroundColor: "var(--kpt-card)",
+                borderColor: "var(--kpt-border)",
+                color: "var(--kpt-muted)",
+              }}
+            >
+              <span className="transition-transform duration-300">
+                {isDark ? (
+                  <Sun className="w-4 h-4 text-yellow-400" />
+                ) : (
+                  <Moon className="w-4 h-4 text-blue-500" />
+                )}
+              </span>
+              <span className="text-xs hidden lg:block" style={{ color: "var(--kpt-muted)" }}>
+                {isDark ? "Light" : "Dark"}
+              </span>
+            </button>
+
             <a
               href="https://wa.me/+919999999999"
               target="_blank"
@@ -88,19 +145,46 @@ export function Navbar() {
           </div>
 
           {/* Mobile Toggle */}
-          <button
-            className="md:hidden p-2 rounded-lg text-[#7a8dbe] hover:text-white hover:bg-white/5"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            {/* Mobile Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle dark/light mode"
+              className="p-2 rounded-lg transition-all duration-200"
+              style={{
+                color: "var(--kpt-muted)",
+                backgroundColor: "var(--kpt-card)",
+                border: "1px solid var(--kpt-border)",
+              }}
+            >
+              {isDark ? (
+                <Sun className="w-5 h-5 text-yellow-400" />
+              ) : (
+                <Moon className="w-5 h-5 text-blue-500" />
+              )}
+            </button>
+
+            <button
+              className="p-2 rounded-lg transition-all duration-200"
+              style={{ color: "var(--kpt-muted)" }}
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-[#0e1a42]/98 backdrop-blur-xl border-t border-blue-900/20 px-4 pb-6 pt-2">
+        <div
+          className="md:hidden backdrop-blur-xl border-t px-4 pb-6 pt-2"
+          style={{
+            backgroundColor: "var(--kpt-nav-bg)",
+            borderColor: "var(--kpt-border)",
+          }}
+        >
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -109,8 +193,11 @@ export function Navbar() {
               className={`block px-4 py-3 rounded-lg text-sm font-medium my-1 transition-all ${
                 pathname === link.href
                   ? "bg-blue-600/20 text-blue-400"
-                  : "text-[#7a8dbe] hover:text-white hover:bg-white/5"
+                  : "hover:bg-white/5"
               }`}
+              style={
+                pathname !== link.href ? { color: "var(--kpt-muted)" } : {}
+              }
             >
               {link.label}
             </Link>

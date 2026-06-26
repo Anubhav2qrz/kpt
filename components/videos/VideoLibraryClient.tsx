@@ -7,6 +7,8 @@ import type { Video } from "@/lib/types";
 import { Play } from "lucide-react";
 
 const TABS = [
+  { value: "class9", label: "Class 9 Physics" },
+  { value: "class10", label: "Class 10 Physics" },
   { value: "class11", label: "Class 11 Physics" },
   { value: "class12", label: "Class 12 Physics" },
   { value: "jee", label: "JEE Physics" },
@@ -67,8 +69,8 @@ export function VideoLibraryClient({ initialVideos, initialCategory }: Props) {
       ) : videos.length === 0 ? (
         <div className="text-center py-24 glass-card rounded-2xl">
           <Play className="w-16 h-16 text-blue-600/30 mx-auto mb-4" />
-          <p className="text-white font-semibold mb-2">No videos yet for this category</p>
-          <p className="text-[#7a8dbe] text-sm">Check back soon — more lectures coming!</p>
+          <p className="font-semibold mb-2" style={{ color: "var(--kpt-text)" }}>No videos yet for this category</p>
+          <p className="text-sm" style={{ color: "var(--kpt-muted)" }}>Check back soon — more lectures coming!</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

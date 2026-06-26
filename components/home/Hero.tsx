@@ -26,16 +26,16 @@ export function Hero() {
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-6" style={{ fontFamily: "Outfit" }}>
-              <span className="text-white">Master</span>
+              <span style={{ color: "var(--kpt-text)" }}>Master</span>
               <br />
               <span className="gradient-text">Physics</span>
               <br />
-              <span className="text-white">with</span>{" "}
+              <span style={{ color: "var(--kpt-text)" }}>with</span>{" "}
               <span className="text-orange-500">Kishore Sir</span>
             </h1>
 
-            <p className="text-[#7a8dbe] text-lg leading-relaxed mb-10 max-w-xl">
-              Premium physics coaching for Class 11, Class 12, JEE & NEET. Conceptual clarity, exam-focused content, and proven results — all in one place.
+            <p className="text-lg leading-relaxed mb-10 max-w-xl" style={{ color: "var(--kpt-muted)" }}>
+              Premium physics coaching for Class 9, 10, 11, 12, JEE &amp; NEET. Conceptual clarity, exam-focused content, and proven results — all in one place.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -60,7 +60,8 @@ export function Hero() {
               </Link>
               <Link
                 href="/videos"
-                className="inline-flex items-center gap-2 text-[#7a8dbe] hover:text-white font-semibold px-6 py-4 rounded-2xl text-base border border-blue-900/40 hover:border-blue-600/40 transition-all duration-300"
+                className="inline-flex items-center gap-2 font-semibold px-6 py-4 rounded-2xl text-base transition-all duration-300 hover:text-blue-400"
+                style={{ color: "var(--kpt-muted)", border: "1px solid var(--kpt-border)" }}
               >
                 <Play className="w-5 h-5" />
                 Watch Free Videos
@@ -76,7 +77,7 @@ export function Hero() {
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-600/30 to-orange-500/20 blur-2xl scale-110" />
               {/* Photo circle */}
               <div className="relative w-80 h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden border-4 border-blue-600/40 shadow-2xl shadow-blue-900/50 pulse-ring">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#1a3a8f] via-[#0e1a42] to-[#080f2a] flex flex-col items-center justify-center">
+                <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: "linear-gradient(135deg, #1a3a8f 0%, #0a0a1a 60%, #000000 100%)" }}>
                   <Atom className="w-24 h-24 text-blue-400/60 float-anim mb-4" />
                   <span className="text-blue-300 font-bold text-xl" style={{ fontFamily: "Outfit" }}>Kishore Sir</span>
                   <span className="text-[#7a8dbe] text-sm mt-1">Physics Expert</span>

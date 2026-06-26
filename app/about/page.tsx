@@ -26,8 +26,8 @@ export default function AboutPage() {
           </div>
 
           <h1
-            className="text-5xl font-black text-white mb-4"
-            style={{ fontFamily: "Outfit" }}
+            className="text-5xl font-black mb-4"
+            style={{ fontFamily: "Outfit", color: "var(--kpt-text)" }}
           >
             About{" "}
             <span className="text-orange-500">
@@ -43,7 +43,7 @@ export default function AboutPage() {
           <div className="flex justify-center">
             <div className="relative w-72 h-72 rounded-3xl overflow-hidden border-2 border-blue-600/30 shadow-2xl shadow-blue-900/40">
 
-              <div className="absolute inset-0 bg-gradient-to-br from-[#1a3a8f] via-[#0e1a42] to-[#080f2a] flex flex-col items-center justify-center">
+              <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: "linear-gradient(135deg, #1a3a8f 0%, #0a0a1a 60%, #000000 100%)" }}>
 
                 <Atom className="w-24 h-24 text-blue-400/50 mb-4" />
 
@@ -70,8 +70,8 @@ export default function AboutPage() {
 
             <div>
               <h2
-                className="text-3xl font-black text-white mb-4"
-                style={{ fontFamily: "Outfit" }}
+                className="text-3xl font-black mb-4"
+                style={{ fontFamily: "Outfit", color: "var(--kpt-text)" }}
               >
                 About{" "}
                 <span className="gradient-text-blue">
@@ -79,19 +79,19 @@ export default function AboutPage() {
                 </span>
               </h2>
 
-              <p className="text-[#7a8dbe] leading-relaxed mb-4">
+              <p className="leading-relaxed mb-4" style={{ color: "var(--kpt-muted)" }}>
                 Kishore Pramanik is a dedicated Physics teacher from
                 Krishnanagar, West Bengal, with more than 10 years of
                 teaching experience.
               </p>
 
-              <p className="text-[#7a8dbe] leading-relaxed mb-4">
+              <p className="leading-relaxed mb-4" style={{ color: "var(--kpt-muted)" }}>
                 He teaches Physics for Class 11, Class 12, JEE, and
                 NEET aspirants and focuses on building strong concepts
                 and problem-solving skills.
               </p>
 
-              <p className="text-[#7a8dbe] leading-relaxed">
+              <p className="leading-relaxed" style={{ color: "var(--kpt-muted)" }}>
                 Through Kishore Plus Tutorial, he aims to make Physics
                 simple, understandable, and enjoyable for every student.
               </p>
@@ -110,13 +110,13 @@ export default function AboutPage() {
                     <Icon className="w-6 h-6 text-blue-400 mx-auto mb-2" />
 
                     <div
-                      className="text-2xl font-black text-white"
-                      style={{ fontFamily: "Outfit" }}
+                      className="text-2xl font-black"
+                      style={{ fontFamily: "Outfit", color: "var(--kpt-text)" }}
                     >
                       {item.label}
                     </div>
 
-                    <div className="text-[#7a8dbe] text-xs mt-1">
+                    <div className="text-xs mt-1" style={{ color: "var(--kpt-muted)" }}>
                       {item.sub}
                     </div>
                   </div>
@@ -131,14 +131,14 @@ export default function AboutPage() {
 
           <Target className="w-12 h-12 text-orange-500 mx-auto mb-5" />
 
-          <h3
-            className="text-3xl font-black text-white mb-4"
-            style={{ fontFamily: "Outfit" }}
+           <h3
+            className="text-3xl font-black mb-4"
+            style={{ fontFamily: "Outfit", color: "var(--kpt-text)" }}
           >
             Our Mission
           </h3>
 
-          <p className="text-[#7a8dbe] leading-relaxed max-w-2xl mx-auto text-lg">
+          <p className="leading-relaxed max-w-2xl mx-auto text-lg" style={{ color: "var(--kpt-muted)" }}>
             To help students understand Physics in a simple and practical
             way while preparing them for Board Exams, JEE, and NEET
             through conceptual learning and regular practice.

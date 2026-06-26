@@ -2,16 +2,17 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Kishore Plus Tutorial — Expert Physics Coaching",
   description:
-    "Premium physics coaching for Class 11, Class 12, JEE & NEET by Kishore Sir. Watch free video lectures, download notes, and practice daily questions.",
-  keywords: "physics tutor, JEE physics, NEET physics, class 11 physics, class 12 physics, Kishore Plus Tutorial",
+    "Premium physics coaching for Class 9, 10, 11, 12, JEE & NEET by Kishore Sir. Watch free video lectures, download notes, and practice daily questions.",
+  keywords: "physics tutor, JEE physics, NEET physics, class 9 physics, class 10 physics, class 11 physics, class 12 physics, Kishore Plus Tutorial",
   openGraph: {
     title: "Kishore Plus Tutorial",
-    description: "Expert Physics Coaching for JEE & NEET",
+    description: "Expert Physics Coaching for Class 9–12, JEE & NEET",
     type: "website",
   },
 };
@@ -22,12 +23,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="min-h-screen bg-[#080f2a] text-[#e8eeff] antialiased">
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <Toaster position="top-right" richColors />
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
+      <body
+        className="min-h-screen antialiased"
+        style={{ backgroundColor: "var(--kpt-bg)", color: "var(--kpt-text)" }}
+      >
+        <ThemeProvider>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+          <Toaster position="top-right" richColors />
+        </ThemeProvider>
       </body>
     </html>
   );
