@@ -40,7 +40,7 @@ export default async function AdminVideosPage() {
   }
 
   const CATEGORY_LABELS: Record<string, string> = {
-    class11: "Class 11", class12: "Class 12", jee: "JEE", neet: "NEET",
+    class9: "Class 9", class10: "Class 10", class11: "Class 11", class12: "Class 12", jee: "JEE", neet: "NEET",
   };
 
   return (

@@ -12,7 +12,7 @@ create table videos (
   title text not null,
   youtube_url text not null,
   youtube_id text not null,
-  category text not null check (category in ('class11','class12','jee','neet')),
+  category text not null check (category in ('class9','class10','class11','class12','jee','neet')),
   created_at timestamptz default now()
 );
 

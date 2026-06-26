@@ -3,7 +3,7 @@ export interface Video {
   title: string;
   youtube_url: string;
   youtube_id: string;
-  category: "class11" | "class12" | "jee" | "neet";
+  category: "class9" | "class10" | "class11" | "class12" | "jee" | "neet";
   created_at: string;
 }
 
@@ -25,6 +25,8 @@ export interface Announcement {
 }
 
 export const VIDEO_CATEGORIES = [
+  { value: "class9", label: "Class 9 Physics" },
+  { value: "class10", label: "Class 10 Physics" },
   { value: "class11", label: "Class 11 Physics" },
   { value: "class12", label: "Class 12 Physics" },
   { value: "jee", label: "JEE Physics" },
