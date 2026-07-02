@@ -90,13 +90,13 @@ export function AiChatWidget() {
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5 rounded-t-2xl">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--kpt-border)] bg-[var(--kpt-surface)] rounded-t-2xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400">
               <Bot className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-white">KPT AI Tutor</h3>
+              <h3 className="font-bold" style={{ color: "var(--kpt-text)" }}>KPT AI Tutor</h3>
               <p className="text-xs text-green-400 flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-green-400"></span> Online
               </p>
@@ -104,7 +104,7 @@ export function AiChatWidget() {
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="p-2 text-[#7a8dbe] hover:text-white transition-colors"
+            className="p-2 text-[#7a8dbe] hover:text-blue-500 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -127,7 +127,7 @@ export function AiChatWidget() {
                 className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm ${
                   msg.role === "user"
                     ? "bg-blue-600 text-white rounded-tr-none"
-                    : "bg-white/10 text-gray-200 rounded-tl-none"
+                    : "bg-[var(--kpt-surface)] border border-[var(--kpt-border)] text-[var(--kpt-text)] rounded-tl-none"
                 }`}
                 style={{ wordBreak: 'break-word' }}
               >
@@ -145,7 +145,7 @@ export function AiChatWidget() {
               </div>
 
               {msg.role === "user" && (
-                <div className="w-8 h-8 rounded-full bg-white/20 flex-shrink-0 flex items-center justify-center text-white">
+                <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex-shrink-0 flex items-center justify-center shadow-md">
                   <User className="w-5 h-5" />
                 </div>
               )}
@@ -157,7 +157,7 @@ export function AiChatWidget() {
               <div className="w-8 h-8 rounded-full bg-blue-600/20 flex-shrink-0 flex items-center justify-center text-blue-400">
                 <Bot className="w-5 h-5" />
               </div>
-              <div className="bg-white/10 text-gray-200 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-2">
+              <div className="bg-[var(--kpt-surface)] border border-[var(--kpt-border)] text-[var(--kpt-text)] rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
                 <span className="text-sm">Thinking...</span>
               </div>
@@ -167,14 +167,14 @@ export function AiChatWidget() {
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t border-white/10 bg-white/5 rounded-b-2xl">
+        <div className="p-4 border-t border-[var(--kpt-border)] bg-[var(--kpt-surface)] rounded-b-2xl">
           <form onSubmit={handleSubmit} className="flex gap-2">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask a physics question..."
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white placeholder-[#7a8dbe] focus:outline-none focus:border-blue-500 transition-colors text-sm"
+              className="flex-1 bg-[var(--kpt-bg)] border border-[var(--kpt-border)] rounded-xl px-4 py-2 text-[var(--kpt-text)] placeholder-[var(--kpt-muted)] focus:outline-none focus:border-blue-500 transition-colors text-sm"
               disabled={isLoading}
             />
             <button
