@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { AiChatWidget } from "@/components/chat/AiChatWidget";
 
 export const metadata: Metadata = {
   title: "Kishore Plus Tutorial — Expert Physics Coaching",
@@ -32,6 +33,7 @@ export default function RootLayout({
           <Navbar />
           <main>{children}</main>
           <Footer />
+          <AiChatWidget />
           <Toaster position="top-right" richColors />
         </ThemeProvider>
       </body>

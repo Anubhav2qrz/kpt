@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: "Practice one new physics question every day. Sharpen your problem-solving skills for JEE & NEET.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function PracticePage() {
   const question = getDailyQuestion();
 
@@ -17,7 +19,7 @@ export default function PracticePage() {
           <div className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">
             🎯 Daily Practice
           </div>
-          <h1 className="text-5xl font-black text-white mb-4" style={{ fontFamily: "Outfit" }}>
+          <h1 className="text-5xl font-black mb-4" style={{ fontFamily: "Outfit", color: "var(--kpt-text)" }}>
             Question of the <span className="text-orange-500">Day</span>
           </h1>
           <p className="text-[#7a8dbe]">

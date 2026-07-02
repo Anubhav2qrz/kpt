@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Award, Users, BookOpen, Target, Atom } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 
 const HIGHLIGHTS = [
   { icon: Award, label: "10+", sub: "Years Experience" },
-  { icon: BookOpen, label: "Class 11 & 12", sub: "Physics" },
+  { icon: BookOpen, label: "Class 9 to 12", sub: "Physics & Science" },
   { icon: Target, label: "JEE", sub: "Preparation" },
   { icon: Users, label: "NEET", sub: "Preparation" },
 ];
@@ -39,29 +40,17 @@ export default function AboutPage() {
         {/* Profile Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
 
-          {/* Photo Placeholder */}
+          {/* Photo */}
           <div className="flex justify-center">
             <div className="relative w-72 h-72 rounded-3xl overflow-hidden border-2 border-blue-600/30 shadow-2xl shadow-blue-900/40">
-
-              <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: "linear-gradient(135deg, #1a3a8f 0%, #0a0a1a 60%, #000000 100%)" }}>
-
-                <Atom className="w-24 h-24 text-blue-400/50 mb-4" />
-
-                <span
-                  className="text-blue-300 font-bold text-xl"
-                  style={{ fontFamily: "Outfit" }}
-                >
-                  Kishore Pramanik
-                </span>
-
-                <span className="text-[#7a8dbe] text-sm">
-                  Physics Teacher
-                </span>
-
-                <span className="text-[#7a8dbe] text-xs mt-2">
-                  (Photo Coming Soon)
-                </span>
-              </div>
+              <Image 
+                src="/sir-image.jpeg" 
+                alt="Kishore Pramanik" 
+                fill
+                className="object-cover"
+                sizes="288px"
+                priority
+              />
             </div>
           </div>
 
@@ -86,8 +75,8 @@ export default function AboutPage() {
               </p>
 
               <p className="leading-relaxed mb-4" style={{ color: "var(--kpt-muted)" }}>
-                He teaches Physics for Class 11, Class 12, JEE, and
-                NEET aspirants and focuses on building strong concepts
+                He teaches Science for Class 9 & 10, and Physics for Class 11, 12, JEE, and
+                NEET aspirants, focusing on building strong concepts
                 and problem-solving skills.
               </p>
 

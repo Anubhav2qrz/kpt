@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Download, Play, ChevronRight, Atom, Zap } from "lucide-react";
 
 export function Hero() {
@@ -77,12 +78,14 @@ export function Hero() {
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-600/30 to-orange-500/20 blur-2xl scale-110" />
               {/* Photo circle */}
               <div className="relative w-80 h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden border-4 border-blue-600/40 shadow-2xl shadow-blue-900/50 pulse-ring">
-                <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: "linear-gradient(135deg, #1a3a8f 0%, #0a0a1a 60%, #000000 100%)" }}>
-                  <Atom className="w-24 h-24 text-blue-400/60 float-anim mb-4" />
-                  <span className="text-blue-300 font-bold text-xl" style={{ fontFamily: "Outfit" }}>Kishore Sir</span>
-                  <span className="text-[#7a8dbe] text-sm mt-1">Physics Expert</span>
-                  <span className="text-[#7a8dbe] text-xs mt-1">(Photo coming soon)</span>
-                </div>
+                <Image 
+                  src="/sir-image.jpeg" 
+                  alt="Kishore Sir" 
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 320px, 384px"
+                  priority
+                />
               </div>
 
               {/* Floating badges */}

@@ -47,7 +47,7 @@ export default function ContactPage() {
           <div className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">
             📞 Reach Out
           </div>
-          <h1 className="text-5xl font-black text-white mb-4" style={{ fontFamily: "Outfit" }}>
+          <h1 className="text-5xl font-black mb-4" style={{ fontFamily: "Outfit", color: "var(--kpt-text)" }}>
             Get in <span className="text-orange-500">Touch</span>
           </h1>
           <p className="text-[#7a8dbe] max-w-lg mx-auto">
@@ -69,8 +69,8 @@ export default function ContactPage() {
                 <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${card.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                   <Icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-white font-bold text-lg mb-1" style={{ fontFamily: "Outfit" }}>{card.title}</h3>
-                <p className="text-[#7a8dbe] text-xs mb-2">{card.sub}</p>
+                <h3 className="font-bold text-lg mb-1" style={{ fontFamily: "Outfit", color: "var(--kpt-text)" }}>{card.title}</h3>
+                <p className="text-xs mb-2" style={{ color: "var(--kpt-muted)" }}>{card.sub}</p>
                 <p className="text-blue-300 text-sm font-medium break-all mb-5">{card.value}</p>
                 <span className="btn-glow text-white text-sm font-semibold px-6 py-2 rounded-xl">
                   {card.cta}
@@ -84,10 +84,10 @@ export default function ContactPage() {
         <div className="glass-card p-10 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-green-600/5 to-blue-600/5 pointer-events-none" />
           <MessageCircle className="w-12 h-12 text-green-400 mx-auto mb-4" />
-          <h3 className="text-2xl font-black text-white mb-3" style={{ fontFamily: "Outfit" }}>
+          <h3 className="text-2xl font-black mb-3" style={{ fontFamily: "Outfit", color: "var(--kpt-text)" }}>
             Join Our WhatsApp Group
           </h3>
-          <p className="text-[#7a8dbe] mb-6 max-w-md mx-auto">
+          <p className="mb-6 max-w-md mx-auto" style={{ color: "var(--kpt-muted)" }}>
             Get instant notifications about new videos, exam updates, and free study material directly on WhatsApp.
           </p>
           <a

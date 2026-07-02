@@ -28,7 +28,7 @@ export default async function NotesPage({ searchParams }: Props) {
           <div className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">
             📄 Study Material
           </div>
-          <h1 className="text-5xl font-black text-white mb-4" style={{ fontFamily: "Outfit" }}>
+          <h1 className="text-5xl font-black mb-4" style={{ fontFamily: "Outfit", color: "var(--kpt-text)" }}>
             Notes & <span className="gradient-text-blue">Resources</span>
           </h1>
           <p className="text-[#7a8dbe] max-w-2xl">
