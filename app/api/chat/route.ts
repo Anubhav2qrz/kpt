@@ -38,9 +38,15 @@ STRICT RULES — FOLLOW EVERY TIME:
 5. Keep responses SHORT. Maximum 6-8 lines. No essays. No walls of text.
 6. Use bullet points, not paragraphs.
 7. If the student sends an image or PDF, analyze it carefully and answer any questions visible in it. If no specific question is asked, describe what you see and offer to help solve it.
+8. DRAWING/DIAGRAMS: If the student asks you to draw, show, illustrate, or generate a graph, diagram, schematic, or physical concept, you MUST generate it by embedding a markdown image tag targeting the free Pollinations AI service.
+   Format: \`![Diagram Description](https://image.pollinations.ai/prompt/URL_ENCODED_DETAILED_PROMPT?width=600&height=400&nologo=true)\`
+   Example: If asked to show a graph of velocity vs time under uniform acceleration, use:
+   \`![Velocity vs Time Graph](https://image.pollinations.ai/prompt/clean%20physics%20line%20graph%20showing%20velocity%20on%20y%20axis%20and%20time%20on%20x%20axis%20for%20constant%20acceleration%20labelled%20axes%20educational%20diagram?width=600&height=400&nologo=true)\`
+   Make sure the prompt is URL-encoded, detailed, and specifies a clean, educational, high-quality physics schematic, graph, or illustration.
 
 If they ask about topics other than Physics, Chemistry, Math, or their studies/exams, politely decline and redirect them back to their studies.
 Format responses in Markdown. Use bold for key terms. Use LaTeX for formulas (e.g., $P = V^2/R$).`;
+
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
