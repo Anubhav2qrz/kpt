@@ -334,6 +334,17 @@ export function AiChatModal() {
                           strong: ({ children }) => <strong className="font-bold text-blue-400">{children}</strong>,
                           code: ({ children, className }) => {
                             const isBlock = className?.includes("language-");
+                            const language = className?.replace("language-", "") || "";
+
+                            if (isBlock && (language === "svg" || String(children).trim().startsWith("<svg"))) {
+                              return (
+                                <div
+                                  className="bg-white rounded-xl p-4 my-2 flex justify-center items-center overflow-x-auto shadow-md border border-white/10 w-full"
+                                  dangerouslySetInnerHTML={{ __html: String(children) }}
+                                />
+                              );
+                            }
+
                             return isBlock ? (
                               <pre className="bg-black/35 rounded-lg p-2.5 my-1.5 overflow-x-auto text-xs font-mono">
                                 <code>{children}</code>
