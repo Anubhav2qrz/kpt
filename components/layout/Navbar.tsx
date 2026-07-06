@@ -6,7 +6,6 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X, Sun, Moon, Bot } from "lucide-react";
 import { useTheme } from "@/components/layout/ThemeProvider";
-import { useChatContext } from "@/components/chat/ChatContext";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -22,7 +21,6 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
-  const { isOpen: isChatOpen, toggleChat } = useChatContext();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -109,18 +107,18 @@ export function Navbar() {
           {/* CTA + Theme Toggle + AI Tutor */}
           <div className="hidden md:flex items-center gap-3">
             {/* AI Tutor Button */}
-            <button
-              onClick={toggleChat}
-              aria-label="Toggle AI Tutor Chat"
-              title="Open AI Tutor"
+            <Link
+              href="/chat"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open AI Tutor Chat"
+              title="Open AI Tutor (New Window)"
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 border relative overflow-hidden group"
               style={{
-                backgroundColor: isChatOpen ? "rgba(37, 99, 235, 0.2)" : "rgba(37, 99, 235, 0.08)",
-                borderColor: isChatOpen ? "rgba(96, 165, 250, 0.5)" : "rgba(37, 99, 235, 0.25)",
+                backgroundColor: "rgba(37, 99, 235, 0.08)",
+                borderColor: "rgba(37, 99, 235, 0.25)",
                 color: "rgb(96, 165, 250)",
-                boxShadow: isChatOpen
-                  ? "0 0 20px rgba(37, 99, 235, 0.3), inset 0 0 20px rgba(37, 99, 235, 0.05)"
-                  : "0 0 12px rgba(37, 99, 235, 0.15)",
+                boxShadow: "0 0 12px rgba(37, 99, 235, 0.15)",
               }}
             >
               <span className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-400/10 to-blue-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
@@ -130,7 +128,7 @@ export function Navbar() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
               </span>
-            </button>
+            </Link>
 
             {/* Theme Toggle */}
             <button
@@ -173,17 +171,19 @@ export function Navbar() {
           {/* Mobile Toggle */}
           <div className="md:hidden flex items-center gap-1 sm:gap-2">
             {/* Mobile AI Tutor */}
-            <button
-              onClick={toggleChat}
-              aria-label="Toggle AI Tutor Chat"
+            <Link
+              href="/chat"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open AI Tutor Chat"
               className="p-2 rounded-lg transition-all duration-200"
               style={{
-                color: isChatOpen ? "rgb(96, 165, 250)" : "var(--kpt-muted)",
-                backgroundColor: isChatOpen ? "rgba(37, 99, 235, 0.12)" : "transparent",
+                color: "var(--kpt-muted)",
+                backgroundColor: "transparent",
               }}
             >
               <Bot className="w-5 h-5" />
-            </button>
+            </Link>
 
             {/* Mobile Theme Toggle */}
             <button
