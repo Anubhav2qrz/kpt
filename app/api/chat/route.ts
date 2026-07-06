@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ── Prepare history (shared by both providers) ──
+    // ── Prepare history (shared by all providers) ──
     let trimmedHistory = (history || []).filter(
       (msg: any) => msg.role === "user" || msg.role === "assistant"
     );
@@ -119,78 +119,74 @@ export async function POST(req: NextRequest) {
       trimmedHistory = trimmedHistory.slice(-MAX_HISTORY_MESSAGES);
     }
 
-    // ── Try Gemini first ──
+    // Format history for Gemini
+    let geminiHistory = trimmedHistory.map((msg: any) => ({
+      role: msg.role === "user" ? "user" : "model",
+      parts: [{ text: msg.content }],
+    }));
+
+    // Gemini requires history to start with 'user' role
+    while (geminiHistory.length > 0 && geminiHistory[0].role === "model") {
+      geminiHistory.shift();
+    }
+
+    // ── 1. Try Gemini 2.5 Flash (primary) ──
     if (process.env.GEMINI_API_KEY) {
-      let geminiError: any = null;
+      try {
+        console.log("Trying Gemini 2.5 Flash...");
+        const model = genAI.getGenerativeModel({
+          model: "gemini-2.5-flash",
+          systemInstruction: systemPrompt,
+        });
 
-      // Format history for Gemini
-      let geminiHistory = trimmedHistory.map((msg: any) => ({
-        role: msg.role === "user" ? "user" : "model",
-        parts: [{ text: msg.content }],
-      }));
+        const chat = model.startChat({ history: geminiHistory });
+        const result = await chat.sendMessage(message);
+        const response = await result.response;
+        const text = response.text();
 
-      // Gemini requires history to start with 'user' role
-      while (geminiHistory.length > 0 && geminiHistory[0].role === "model") {
-        geminiHistory.shift();
-      }
-
-      const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
-        systemInstruction: systemPrompt,
-      });
-
-      for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-        try {
-          const chat = model.startChat({ history: geminiHistory });
-          const result = await chat.sendMessage(message);
-          const response = await result.response;
-          const text = response.text();
-
-          // Gemini succeeded!
-          return NextResponse.json({ text, provider: "gemini" });
-        } catch (error: any) {
-          geminiError = error;
-          if (isRateLimitError(error) && attempt < MAX_RETRIES - 1) {
-            const delay = BASE_DELAY_MS * Math.pow(2, attempt);
-            console.warn(
-              `Gemini rate limit hit, retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES})...`
-            );
-            await sleep(delay);
-            continue;
-          }
-          // If it's a rate limit on the last attempt, break to try Groq
-          if (isRateLimitError(error)) {
-            console.warn("Gemini rate limit exhausted, falling back to Groq...");
-            break;
-          }
-          // For non-rate-limit errors, also try Groq as fallback
-          console.error("Gemini error, falling back to Groq:", error.message);
-          break;
-        }
+        return NextResponse.json({ text, provider: "gemini-2.5-flash" });
+      } catch (error: any) {
+        console.warn("Gemini 2.5 Flash failed:", error.message);
       }
     }
 
-    // ── Fallback to Groq ──
+    // ── 2. Try Gemini 2.0 Flash (2nd fallback — faster, higher quota) ──
+    if (process.env.GEMINI_API_KEY) {
+      try {
+        console.log("Falling back to Gemini 2.0 Flash...");
+        const model = genAI.getGenerativeModel({
+          model: "gemini-2.0-flash",
+          systemInstruction: systemPrompt,
+        });
+
+        const chat = model.startChat({ history: geminiHistory });
+        const result = await chat.sendMessage(message);
+        const response = await result.response;
+        const text = response.text();
+
+        return NextResponse.json({ text, provider: "gemini-2.0-flash" });
+      } catch (error: any) {
+        console.warn("Gemini 2.0 Flash also failed:", error.message);
+      }
+    }
+
+    // ── 3. Try Groq (3rd fallback) ──
     if (process.env.GROQ_API_KEY) {
       try {
-        console.log("Using Groq fallback...");
+        console.log("Falling back to Groq...");
         const text = await callGroqFallback(trimmedHistory, message);
         return NextResponse.json({ text, provider: "groq" });
       } catch (groqError: any) {
         console.error("Groq fallback also failed:", groqError.message);
-        return NextResponse.json(
-          {
-            error: "Both AI providers are currently unavailable.",
-            details: "Please try again in a minute.",
-          },
-          { status: 503 }
-        );
       }
     }
 
-    // Neither provider available
+    // All providers failed
     return NextResponse.json(
-      { error: "No AI provider is available.", details: "Please try again later." },
+      {
+        error: "All AI providers are currently unavailable.",
+        details: "Please try again in a minute.",
+      },
       { status: 503 }
     );
   } catch (error: any) {
