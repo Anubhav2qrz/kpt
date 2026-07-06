@@ -43,17 +43,25 @@ export function AiChatWidget() {
     setIsLoading(true);
 
     try {
+      // Only send the last 10 messages of history to keep token usage low
+      const recentHistory = messages.slice(1).slice(-10);
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          history: messages.slice(1), // Gemini requires history to start with a user message
+          history: recentHistory,
           message: userMsg,
         }),
       });
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
+        if (response.status === 429 || errData.isRateLimit) {
+          throw new Error(
+            "The AI tutor is taking a short break due to high usage. Please wait about a minute and try again! 🕐"
+          );
+        }
         throw new Error(errData.details || "Failed to get response");
       }
 
@@ -64,7 +72,7 @@ export function AiChatWidget() {
       console.error(error);
       setMessages([
         ...newMessages,
-        { role: "model", content: `Sorry, an error occurred: ${error.message}` },
+        { role: "model", content: `${error.message}` },
       ]);
     } finally {
       setIsLoading(false);
