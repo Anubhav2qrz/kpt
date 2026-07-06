@@ -1,28 +1,43 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Bot, User, Loader2 } from "lucide-react";
+import { X, Send, Bot, User, Loader2, Paperclip, FileText, ImageIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
+import { useChatContext } from "./ChatContext";
 
 type Message = {
   role: "user" | "model";
   content: string;
+  imagePreview?: string; // data URL for displaying uploaded images in chat
 };
 
+const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4 MB
+const ACCEPTED_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "application/pdf",
+];
+
 export function AiChatWidget() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, setIsOpen } = useChatContext();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "model",
-      content: "Hello! I am the KPT AI Tutor. How can I help you with your studies today?",
+      content: "Hello! I am the KPT AI Tutor. Ask me a question or upload a photo of a problem! 📸",
     },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [attachedFile, setAttachedFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -34,39 +49,132 @@ export function AiChatWidget() {
     }
   }, [messages, isOpen]);
 
+  // Generate file preview when a file is attached
+  useEffect(() => {
+    if (!attachedFile) {
+      setFilePreview(null);
+      return;
+    }
+
+    if (attachedFile.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onloadend = () => setFilePreview(reader.result as string);
+      reader.readAsDataURL(attachedFile);
+    } else {
+      // For PDFs, just show an icon
+      setFilePreview(null);
+    }
+  }, [attachedFile]);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFileError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!ACCEPTED_TYPES.includes(file.type)) {
+      setFileError("Unsupported file. Use JPEG, PNG, WebP, GIF, or PDF.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      setFileError("File too large. Maximum 4 MB.");
+      e.target.value = "";
+      return;
+    }
+
+    setAttachedFile(file);
+    setFileError(null);
+  };
+
+  const removeAttachedFile = () => {
+    setAttachedFile(null);
+    setFilePreview(null);
+    setFileError(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        // Strip the data:... prefix to get raw base64
+        const base64 = result.split(",")[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if ((!input.trim() && !attachedFile) || isLoading) return;
 
     const userMsg = input.trim();
+    const currentFile = attachedFile;
+    const currentPreview = filePreview;
     setInput("");
-    
+    removeAttachedFile();
+
+    // Build display content
+    let displayContent = userMsg;
+    if (currentFile && !userMsg) {
+      displayContent = currentFile.type === "application/pdf"
+        ? `📄 ${currentFile.name}`
+        : `📷 Uploaded an image`;
+    } else if (currentFile && userMsg) {
+      displayContent = currentFile.type === "application/pdf"
+        ? `📄 ${currentFile.name}\n\n${userMsg}`
+        : userMsg;
+    }
+
     // Add user message to UI
-    const newMessages: Message[] = [...messages, { role: "user", content: userMsg }];
+    const newMessages: Message[] = [
+      ...messages,
+      {
+        role: "user",
+        content: displayContent,
+        imagePreview: currentFile?.type.startsWith("image/") ? currentPreview || undefined : undefined,
+      },
+    ];
     setMessages(newMessages);
     setIsLoading(true);
 
     try {
-      // Only send the last 10 messages of history to keep token usage low
-      const recentHistory = messages.slice(1).slice(-10);
+      // Build request body
+      const body: any = {
+        history: messages.slice(1).slice(-10).map((m) => ({
+          role: m.role === "user" ? "user" : "assistant",
+          content: m.content,
+        })),
+        message: userMsg || "Please analyze this image and help me with any problems or questions shown.",
+      };
+
+      // Add image if present
+      if (currentFile) {
+        const base64 = await fileToBase64(currentFile);
+        body.image = {
+          base64,
+          mimeType: currentFile.type,
+        };
+      }
 
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          history: recentHistory,
-          message: userMsg,
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
         throw new Error(
-          "Sorry, I couldn't process that. Please try again! 🙏"
+          errorData?.error || "Sorry, I couldn't process that. Please try again! 🙏"
         );
       }
 
       const data = await response.json();
-      
       setMessages([...newMessages, { role: "model", content: data.text }]);
     } catch (error: any) {
       console.error(error);
@@ -74,7 +182,7 @@ export function AiChatWidget() {
         ...newMessages,
         {
           role: "model",
-          content: "Sorry, something went wrong. Please try again in a moment! 🙏",
+          content: error.message || "Sorry, something went wrong. Please try again in a moment! 🙏",
         },
       ]);
     } finally {
@@ -84,19 +192,9 @@ export function AiChatWidget() {
 
   return (
     <>
-      {/* Floating Action Button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 h-14 px-6 rounded-full bg-blue-600 text-white shadow-xl flex items-center justify-center gap-3 hover:bg-blue-700 transition-all z-50 hover:scale-105 active:scale-95 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
-        aria-label="Open AI Tutor Chat"
-      >
-        <MessageCircle className="w-6 h-6" />
-        <span className="font-bold tracking-wide">AI Tutor</span>
-      </button>
-
       {/* Chat Window */}
       <div
-        className={`fixed bottom-6 right-6 w-[90vw] sm:w-[400px] h-[500px] max-h-[80vh] glass-card rounded-2xl shadow-2xl flex flex-col z-50 transition-all duration-300 origin-bottom-right ${
+        className={`fixed bottom-6 right-6 w-[90vw] sm:w-[420px] h-[540px] max-h-[85vh] glass-card rounded-2xl shadow-2xl flex flex-col z-50 transition-all duration-300 origin-bottom-right ${
           isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0 pointer-events-none"
         }`}
       >
@@ -142,6 +240,17 @@ export function AiChatWidget() {
                 }`}
                 style={{ wordBreak: 'break-word' }}
               >
+                {/* Image preview in user message */}
+                {msg.imagePreview && (
+                  <div className="mb-2 rounded-lg overflow-hidden">
+                    <img
+                      src={msg.imagePreview}
+                      alt="Uploaded"
+                      className="max-w-full max-h-40 rounded-lg object-contain"
+                    />
+                  </div>
+                )}
+
                 {msg.role === "user" ? (
                   <p>{msg.content}</p>
                 ) : (
@@ -194,21 +303,89 @@ export function AiChatWidget() {
           <div ref={messagesEndRef} />
         </div>
 
+        {/* File Preview Bar */}
+        {attachedFile && (
+          <div className="px-4 pt-2 border-t border-[var(--kpt-border)] bg-[var(--kpt-surface)]">
+            <div className="flex items-center gap-3 bg-blue-600/10 border border-blue-500/20 rounded-xl px-3 py-2">
+              {filePreview ? (
+                <img
+                  src={filePreview}
+                  alt="Preview"
+                  className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-lg bg-blue-600/20 flex items-center justify-center flex-shrink-0">
+                  <FileText className="w-5 h-5 text-blue-400" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium truncate" style={{ color: "var(--kpt-text)" }}>
+                  {attachedFile.name}
+                </p>
+                <p className="text-[10px]" style={{ color: "var(--kpt-muted)" }}>
+                  {(attachedFile.size / 1024).toFixed(0)} KB
+                </p>
+              </div>
+              <button
+                onClick={removeAttachedFile}
+                className="p-1 text-[var(--kpt-muted)] hover:text-red-400 transition-colors flex-shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* File Error */}
+        {fileError && (
+          <div className="px-4 pt-2">
+            <p className="text-xs text-red-400 flex items-center gap-1">
+              ⚠️ {fileError}
+            </p>
+          </div>
+        )}
+
         {/* Input */}
         <div className="p-4 border-t border-[var(--kpt-border)] bg-[var(--kpt-surface)] rounded-b-2xl">
-          <form onSubmit={handleSubmit} className="flex gap-2">
+          <form onSubmit={handleSubmit} className="flex gap-2 items-end">
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".jpg,.jpeg,.png,.webp,.gif,.pdf"
+              onChange={handleFileSelect}
+              className="hidden"
+              id="chat-file-input"
+            />
+
+            {/* Attach button */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isLoading}
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 flex-shrink-0 border disabled:opacity-40"
+              style={{
+                backgroundColor: attachedFile ? "rgba(37, 99, 235, 0.15)" : "var(--kpt-bg)",
+                borderColor: attachedFile ? "rgba(37, 99, 235, 0.3)" : "var(--kpt-border)",
+                color: attachedFile ? "rgb(96, 165, 250)" : "var(--kpt-muted)",
+              }}
+              title="Attach image or PDF"
+            >
+              <Paperclip className="w-4 h-4" />
+            </button>
+
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask a physics question..."
+              placeholder={attachedFile ? "Add a message (optional)..." : "Ask a physics question..."}
               className="flex-1 bg-[var(--kpt-bg)] border border-[var(--kpt-border)] rounded-xl px-4 py-2 text-[var(--kpt-text)] placeholder-[var(--kpt-muted)] focus:outline-none focus:border-blue-500 transition-colors text-sm"
               disabled={isLoading}
             />
             <button
               type="submit"
-              disabled={!input.trim() || isLoading}
-              className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+              disabled={(!input.trim() && !attachedFile) || isLoading}
+              className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors flex-shrink-0"
             >
               <Send className="w-4 h-4" />
             </button>

@@ -15,6 +15,17 @@ const BASE_DELAY_MS = 1500;
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = "llama-3.3-70b-versatile";
 
+// Max file size: 4 MB
+const MAX_FILE_SIZE_BYTES = 4 * 1024 * 1024;
+
+const ACCEPTED_MIME_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "application/pdf",
+];
+
 const systemPrompt = `You are an expert Physics tutor for "Kishore Plus Tutorial" (KPT), an elite coaching institute for Class 9, 10, 11, 12, JEE, and NEET.
 Your name is "KPT AI Tutor".
 Your tone is encouraging, academic, clear, and helpful.
@@ -26,6 +37,7 @@ STRICT RULES — FOLLOW EVERY TIME:
 4. NEVER explain steps the student did not ask about. If they ask "find the power", do NOT also calculate energy, current, or anything else unless they specifically asked.
 5. Keep responses SHORT. Maximum 6-8 lines. No essays. No walls of text.
 6. Use bullet points, not paragraphs.
+7. If the student sends an image or PDF, analyze it carefully and answer any questions visible in it. If no specific question is asked, describe what you see and offer to help solve it.
 
 If they ask about topics other than Physics, Chemistry, Math, or their studies/exams, politely decline and redirect them back to their studies.
 Format responses in Markdown. Use bold for key terms. Use LaTeX for formulas (e.g., $P = V^2/R$).`;
@@ -46,11 +58,19 @@ function isRateLimitError(error: any): boolean {
   );
 }
 
+// ─── Image data type ────────────────────────────────────────────────────────────
+
+type ImageData = {
+  base64: string;
+  mimeType: string;
+};
+
 // ─── Groq Fallback ─────────────────────────────────────────────────────────────
 
 async function callGroqFallback(
   history: any[],
-  message: string
+  message: string,
+  hasImage: boolean
 ): Promise<string> {
   const groqApiKey = process.env.GROQ_API_KEY;
   if (!groqApiKey) {
@@ -70,8 +90,11 @@ async function callGroqFallback(
     });
   }
 
-  // Add the current message
-  messages.push({ role: "user", content: message });
+  // Add the current message (with note about image if present)
+  const userContent = hasImage
+    ? `${message}\n\n_(Note: An image was attached but this AI model cannot analyze images. Please try again when Gemini is available, or describe the problem in text.)_`
+    : message;
+  messages.push({ role: "user", content: userContent });
 
   const response = await fetch(GROQ_API_URL, {
     method: "POST",
@@ -96,17 +119,67 @@ async function callGroqFallback(
   return data.choices?.[0]?.message?.content || "Sorry, I could not generate a response.";
 }
 
+// ─── Build Gemini message parts ─────────────────────────────────────────────────
+
+function buildGeminiParts(message: string, image?: ImageData) {
+  const parts: any[] = [];
+
+  if (image) {
+    parts.push({
+      inlineData: {
+        mimeType: image.mimeType,
+        data: image.base64,
+      },
+    });
+  }
+
+  if (message.trim()) {
+    parts.push({ text: message });
+  }
+
+  return parts;
+}
+
 // ─── Main Handler ───────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
   try {
-    const { history, message } = await req.json();
+    const { history, message, image } = await req.json();
 
     if (!process.env.GEMINI_API_KEY && !process.env.GROQ_API_KEY) {
       return NextResponse.json(
         { error: "AI Assistant is not configured yet. Missing API Keys." },
         { status: 500 }
       );
+    }
+
+    // ── Validate image if provided ──
+    let validatedImage: ImageData | undefined;
+    if (image) {
+      if (!image.base64 || !image.mimeType) {
+        return NextResponse.json(
+          { error: "Invalid image data. Please try uploading again." },
+          { status: 400 }
+        );
+      }
+
+      if (!ACCEPTED_MIME_TYPES.includes(image.mimeType)) {
+        return NextResponse.json(
+          { error: `Unsupported file type: ${image.mimeType}. Accepted: JPEG, PNG, WebP, GIF, PDF.` },
+          { status: 400 }
+        );
+      }
+
+      // Check approximate size (base64 is ~4/3 of original)
+      const approxSize = (image.base64.length * 3) / 4;
+      if (approxSize > MAX_FILE_SIZE_BYTES) {
+        return NextResponse.json(
+          { error: "File is too large. Maximum size is 4 MB." },
+          { status: 400 }
+        );
+      }
+
+      validatedImage = { base64: image.base64, mimeType: image.mimeType };
     }
 
     // ── Prepare history (shared by all providers) ──
@@ -130,6 +203,9 @@ export async function POST(req: NextRequest) {
       geminiHistory.shift();
     }
 
+    // Build the current message parts (text + optional image)
+    const currentParts = buildGeminiParts(message || "", validatedImage);
+
     // ── 1. Try Gemini 2.5 Flash (primary) ──
     if (process.env.GEMINI_API_KEY) {
       try {
@@ -140,7 +216,7 @@ export async function POST(req: NextRequest) {
         });
 
         const chat = model.startChat({ history: geminiHistory });
-        const result = await chat.sendMessage(message);
+        const result = await chat.sendMessage(currentParts);
         const response = await result.response;
         const text = response.text();
 
@@ -160,7 +236,7 @@ export async function POST(req: NextRequest) {
         });
 
         const chat = model.startChat({ history: geminiHistory });
-        const result = await chat.sendMessage(message);
+        const result = await chat.sendMessage(currentParts);
         const response = await result.response;
         const text = response.text();
 
@@ -170,11 +246,11 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // ── 3. Try Groq (3rd fallback) ──
+    // ── 3. Try Groq (3rd fallback — no image support) ──
     if (process.env.GROQ_API_KEY) {
       try {
         console.log("Falling back to Groq...");
-        const text = await callGroqFallback(trimmedHistory, message);
+        const text = await callGroqFallback(trimmedHistory, message || "", !!validatedImage);
         return NextResponse.json({ text, provider: "groq" });
       } catch (groqError: any) {
         console.error("Groq fallback also failed:", groqError.message);

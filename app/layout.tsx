@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { AiChatWidget } from "@/components/chat/AiChatWidget";
+import { ChatProvider } from "@/components/chat/ChatContext";
 
 export const metadata: Metadata = {
   title: "Kishore Plus Tutorial — Expert Physics Coaching",
@@ -30,13 +31,16 @@ export default function RootLayout({
         style={{ backgroundColor: "var(--kpt-bg)", color: "var(--kpt-text)" }}
       >
         <ThemeProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <AiChatWidget />
-          <Toaster position="top-right" richColors />
+          <ChatProvider>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+            <AiChatWidget />
+            <Toaster position="top-right" richColors />
+          </ChatProvider>
         </ThemeProvider>
       </body>
     </html>
   );
 }
+
