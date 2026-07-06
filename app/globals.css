@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&display=swap");
-
 @import "tailwindcss";
 
 /* ── Dark Mode (default black theme) ─────────────────────── */
@@ -58,7 +56,7 @@ html {
 }
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-inter), sans-serif;
   background-color: var(--kpt-bg);
   color: var(--kpt-text);
   overflow-x: hidden;
@@ -71,8 +69,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-outfit), sans-serif;
 }
+
 
 /* ── Scrollbar ───────────────────────────────────────────── */
 ::-webkit-scrollbar {
