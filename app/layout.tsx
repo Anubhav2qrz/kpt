@@ -5,7 +5,6 @@ import { Footer } from "@/components/layout/Footer";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { ChatProvider } from "@/components/chat/ChatContext";
-import dynamic from "next/dynamic";
 import { Inter, Outfit } from "next/font/google";
 
 const inter = Inter({
@@ -21,11 +20,6 @@ const outfit = Outfit({
   weight: ["400", "600", "700", "800", "900"],
   display: "swap",
 });
-
-const AiChatWidget = dynamic(
-  () => import("@/components/chat/AiChatWidget").then((mod) => mod.AiChatWidget),
-  { ssr: false }
-);
 
 export const metadata: Metadata = {
   title: "Kishore Plus Tutorial — Expert Physics Coaching",
@@ -55,7 +49,6 @@ export default function RootLayout({
             <Navbar />
             <main>{children}</main>
             <Footer />
-            <AiChatWidget />
             <Toaster position="top-right" richColors />
           </ChatProvider>
         </ThemeProvider>
@@ -63,5 +56,6 @@ export default function RootLayout({
     </html>
   );
 }
+
 
 

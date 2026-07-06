@@ -1,6 +1,12 @@
 "use client";
 
 import { createContext, useContext, useState, type ReactNode } from "react";
+import dynamic from "next/dynamic";
+
+const AiChatWidget = dynamic(
+  () => import("./AiChatWidget").then((mod) => mod.AiChatWidget),
+  { ssr: false }
+);
 
 type ChatContextType = {
   isOpen: boolean;
@@ -18,6 +24,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   return (
     <ChatContext.Provider value={{ isOpen, setIsOpen, toggleChat }}>
       {children}
+      <AiChatWidget />
     </ChatContext.Provider>
   );
 }
@@ -29,3 +36,4 @@ export function useChatContext() {
   }
   return context;
 }
+
