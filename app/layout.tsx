@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { ChatProvider } from "@/components/chat/ChatContext";
 import { Inter, Outfit } from "next/font/google";
 
 const inter = Inter({
@@ -44,15 +45,18 @@ export default function RootLayout({
         style={{ backgroundColor: "var(--kpt-bg)", color: "var(--kpt-text)" }}
       >
         <ThemeProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <Toaster position="top-right" richColors />
+          <ChatProvider>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+            <Toaster position="top-right" richColors />
+          </ChatProvider>
         </ThemeProvider>
       </body>
     </html>
   );
 }
+
 
 
 
