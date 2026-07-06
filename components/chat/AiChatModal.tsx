@@ -217,12 +217,12 @@ export function AiChatModal() {
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-2 sm:p-4 transition-all duration-300"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-0 sm:p-4 transition-all duration-300"
       onClick={() => setIsOpen(false)}
     >
       {/* Modal Container */}
       <div
-        className="relative w-full max-w-5xl h-[95vh] sm:h-[85vh] glass-card flex flex-col overflow-hidden shadow-2xl transition-all duration-300 scale-100 opacity-100"
+        className="relative w-full max-w-5xl h-full sm:h-[85vh] bg-[var(--kpt-glass-bg)] backdrop-blur-md rounded-none sm:rounded-2xl border-none sm:border border-[var(--kpt-border)] flex flex-col overflow-hidden shadow-none sm:shadow-2xl transition-all duration-300 scale-100 opacity-100"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
         {/* Header */}
@@ -248,7 +248,7 @@ export function AiChatModal() {
         </header>
 
         {/* Double-Panel Content Layout */}
-        <div className="flex-1 flex overflow-hidden p-3 sm:p-5 gap-5">
+        <div className="flex-1 flex overflow-hidden p-0 sm:p-5 gap-0 sm:gap-5">
           {/* Left Panel: Sidebar (Desktop only) */}
           <aside className="hidden lg:flex flex-col w-72 shrink-0 gap-4 overflow-y-auto pr-1">
             {/* Suggested Prompts */}
@@ -286,7 +286,7 @@ export function AiChatModal() {
           </aside>
 
           {/* Right Panel: Chat Messages Log */}
-          <main className="flex-1 flex flex-col bg-[var(--kpt-surface)] border border-[var(--kpt-border)] rounded-2xl overflow-hidden relative">
+          <main className="flex-1 flex flex-col bg-[var(--kpt-surface)] border-none sm:border border-[var(--kpt-border)] rounded-none sm:rounded-2xl overflow-hidden relative">
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((msg, index) => (
                 <div
