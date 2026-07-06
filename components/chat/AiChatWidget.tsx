@@ -194,12 +194,12 @@ export function AiChatWidget() {
     <>
       {/* Chat Window */}
       <div
-        className={`fixed bottom-6 right-6 w-[90vw] sm:w-[420px] h-[540px] max-h-[85vh] glass-card rounded-2xl shadow-2xl flex flex-col z-50 transition-all duration-300 origin-bottom-right ${
+        className={`fixed bottom-0 right-0 sm:bottom-6 sm:right-6 w-full sm:w-[420px] h-full sm:h-[540px] max-h-screen sm:max-h-[85vh] glass-card rounded-none sm:rounded-2xl shadow-2xl flex flex-col z-[100] transition-all duration-300 origin-bottom-right ${
           isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0 pointer-events-none"
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[var(--kpt-border)] bg-[var(--kpt-surface)] rounded-t-2xl">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--kpt-border)] bg-[var(--kpt-surface)] rounded-t-none sm:rounded-t-2xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400">
               <Bot className="w-6 h-6" />
@@ -346,7 +346,7 @@ export function AiChatWidget() {
         )}
 
         {/* Input */}
-        <div className="p-4 border-t border-[var(--kpt-border)] bg-[var(--kpt-surface)] rounded-b-2xl">
+        <div className="p-4 border-t border-[var(--kpt-border)] bg-[var(--kpt-surface)] rounded-b-none sm:rounded-b-2xl">
           <form onSubmit={handleSubmit} className="flex gap-2 items-end">
             {/* Hidden file input */}
             <input

@@ -54,21 +54,21 @@ export function Navbar() {
           : {}
       }
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden border border-blue-500/30 shadow-lg shadow-blue-700/30 group-hover:shadow-blue-500/50 transition-all duration-300">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+            <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border border-blue-500/30 shadow-lg shadow-blue-700/30 group-hover:shadow-blue-500/50 transition-all duration-300">
               <Image src="/logo.jpg" alt="KPT Logo" fill sizes="40px" className="object-cover" />
             </div>
             <div className="flex flex-col leading-none">
               <span
-                className="font-black text-lg tracking-tight"
+                className="font-black text-sm min-[390px]:text-base sm:text-lg tracking-tight"
                 style={{ fontFamily: "Outfit", color: "var(--kpt-text)" }}
               >
                 KISHORE <span className="text-orange-500">PLUS</span>
               </span>
-              <span className="text-[10px] text-blue-400 tracking-[0.2em] uppercase">
+              <span className="text-[8px] sm:text-[10px] text-blue-400 tracking-[0.2em] uppercase hidden min-[360px]:block">
                 Tutorial
               </span>
             </div>
@@ -171,7 +171,7 @@ export function Navbar() {
           </div>
 
           {/* Mobile Toggle */}
-          <div className="md:hidden flex items-center gap-2">
+          <div className="md:hidden flex items-center gap-1 sm:gap-2">
             {/* Mobile AI Tutor */}
             <button
               onClick={toggleChat}
@@ -179,9 +179,7 @@ export function Navbar() {
               className="p-2 rounded-lg transition-all duration-200"
               style={{
                 color: isChatOpen ? "rgb(96, 165, 250)" : "var(--kpt-muted)",
-                backgroundColor: isChatOpen ? "rgba(37, 99, 235, 0.15)" : "var(--kpt-card)",
-                border: isChatOpen ? "1px solid rgba(96, 165, 250, 0.4)" : "1px solid var(--kpt-border)",
-                boxShadow: isChatOpen ? "0 0 12px rgba(37, 99, 235, 0.2)" : "none",
+                backgroundColor: isChatOpen ? "rgba(37, 99, 235, 0.12)" : "transparent",
               }}
             >
               <Bot className="w-5 h-5" />
@@ -194,8 +192,7 @@ export function Navbar() {
               className="p-2 rounded-lg transition-all duration-200"
               style={{
                 color: "var(--kpt-muted)",
-                backgroundColor: "var(--kpt-card)",
-                border: "1px solid var(--kpt-border)",
+                backgroundColor: "transparent",
               }}
             >
               {isDark ? (

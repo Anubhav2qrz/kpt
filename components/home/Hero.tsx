@@ -26,25 +26,24 @@ export function Hero() {
               Expert Physics Coaching
             </div>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-6" style={{ fontFamily: "Outfit" }}>
-              <span style={{ color: "var(--kpt-text)" }}>Master</span>
-              <br />
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-tight mb-6" style={{ fontFamily: "Outfit" }}>
+              <span style={{ color: "var(--kpt-text)" }}>Master</span>{" "}
               <span className="gradient-text">Physics</span>
-              <br />
+              <br className="hidden sm:inline" />
               <span style={{ color: "var(--kpt-text)" }}>with</span>{" "}
-              <span className="text-orange-500">Kishore Sir</span>
+              <span className="text-orange-500 whitespace-nowrap">Kishore Sir</span>
             </h1>
 
-            <p className="text-lg leading-relaxed mb-10 max-w-xl" style={{ color: "var(--kpt-muted)" }}>
+            <p className="text-base sm:text-lg leading-relaxed mb-10 max-w-xl" style={{ color: "var(--kpt-muted)" }}>
               Premium physics coaching for Class 9, 10, 11, 12, JEE &amp; NEET. Conceptual clarity, exam-focused content, and proven results — all in one place.
             </p>
 
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3 sm:gap-4">
               <a
                 href="https://wa.me/+919999999999"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-orange inline-flex items-center gap-2 text-white font-bold px-8 py-4 rounded-2xl text-base"
+                className="btn-orange inline-flex items-center gap-2 text-white font-bold px-6 py-3.5 sm:px-8 sm:py-4 rounded-2xl text-sm sm:text-base"
               >
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
@@ -54,14 +53,14 @@ export function Hero() {
               </a>
               <Link
                 href="/notes"
-                className="btn-glow inline-flex items-center gap-2 text-white font-bold px-8 py-4 rounded-2xl text-base"
+                className="btn-glow inline-flex items-center gap-2 text-white font-bold px-6 py-3.5 sm:px-8 sm:py-4 rounded-2xl text-sm sm:text-base"
               >
                 <Download className="w-5 h-5" />
                 Download Notes
               </Link>
               <Link
                 href="/videos"
-                className="inline-flex items-center gap-2 font-semibold px-6 py-4 rounded-2xl text-base transition-all duration-300 hover:text-blue-400"
+                className="inline-flex items-center gap-2 font-semibold px-5 py-3.5 sm:px-6 sm:py-4 rounded-2xl text-sm sm:text-base transition-all duration-300 hover:text-blue-400"
                 style={{ color: "var(--kpt-muted)", border: "1px solid var(--kpt-border)" }}
               >
                 <Play className="w-5 h-5" />
@@ -77,29 +76,30 @@ export function Hero() {
               {/* Outer glow ring */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-600/30 to-orange-500/20 blur-2xl scale-110" />
               {/* Photo circle */}
-              <div className="relative w-80 h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden border-4 border-blue-600/40 shadow-2xl shadow-blue-900/50 pulse-ring">
+              <div className="relative w-72 h-72 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden border-4 border-blue-600/40 shadow-2xl shadow-blue-900/50 pulse-ring">
                 <Image 
                   src="/sir-image.jpeg" 
                   alt="Kishore Sir" 
                   fill
                   className="object-cover"
-                  sizes="(max-width: 1024px) 320px, 384px"
+                  sizes="(max-width: 1024px) 280px, 384px"
                   priority
                 />
               </div>
 
               {/* Floating badges */}
-              <div className="absolute -top-4 -right-4 glass-card px-4 py-2 float-anim" style={{ animationDelay: "0.5s" }}>
-                <span className="text-xs text-blue-400 font-semibold">🎯 JEE Expert</span>
+              <div className="absolute -top-4 -right-4 glass-card px-3 py-1.5 float-anim" style={{ animationDelay: "0.5s" }}>
+                <span className="text-[10px] sm:text-xs text-blue-400 font-semibold">🎯 JEE Expert</span>
               </div>
-              <div className="absolute -bottom-4 -left-4 glass-card px-4 py-2 float-anim" style={{ animationDelay: "1s" }}>
-                <span className="text-xs text-orange-400 font-semibold">⚡ NEET Specialist</span>
+              <div className="absolute -bottom-4 -left-4 glass-card px-3 py-1.5 float-anim" style={{ animationDelay: "1s" }}>
+                <span className="text-[10px] sm:text-xs text-orange-400 font-semibold">⚡ NEET Specialist</span>
               </div>
-              <div className="absolute top-1/2 -right-8 glass-card px-4 py-2 float-anim" style={{ animationDelay: "1.5s" }}>
-                <span className="text-xs text-green-400 font-semibold">✅ 10+ Years Exp</span>
+              <div className="absolute top-1/2 -right-8 glass-card px-3 py-1.5 float-anim" style={{ animationDelay: "1.5s" }}>
+                <span className="text-[10px] sm:text-xs text-green-400 font-semibold">✅ 10+ Years Exp</span>
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
