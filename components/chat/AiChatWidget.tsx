@@ -60,13 +60,9 @@ export function AiChatWidget() {
       });
 
       if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        if (response.status === 429 || errData.isRateLimit) {
-          throw new Error(
-            "The AI tutor is taking a short break due to high usage. Please wait about a minute and try again! 🕐"
-          );
-        }
-        throw new Error(errData.details || "Failed to get response");
+        throw new Error(
+          "Sorry, I couldn't process that. Please try again! 🙏"
+        );
       }
 
       const data = await response.json();
@@ -76,7 +72,10 @@ export function AiChatWidget() {
       console.error(error);
       setMessages([
         ...newMessages,
-        { role: "model", content: `${error.message}` },
+        {
+          role: "model",
+          content: "Sorry, something went wrong. Please try again in a moment! 🙏",
+        },
       ]);
     } finally {
       setIsLoading(false);
