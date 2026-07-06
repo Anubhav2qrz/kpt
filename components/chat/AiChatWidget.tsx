@@ -2,6 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send, Bot, User, Loader2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 
 type Message = {
   role: "user" | "model";
@@ -139,17 +143,34 @@ export function AiChatWidget() {
                 }`}
                 style={{ wordBreak: 'break-word' }}
               >
-                {/* Simple Markdown parsing for basic bolding and line breaks */}
-                {msg.content.split('\n').map((line, i) => (
-                  <p key={i} className={i !== 0 ? "mt-1" : ""}>
-                    {line.split(/(\*\*.*?\*\*)/).map((part, j) => {
-                      if (part.startsWith('**') && part.endsWith('**')) {
-                        return <strong key={j} className="font-bold">{part.slice(2, -2)}</strong>;
-                      }
-                      return part;
-                    })}
-                  </p>
-                ))}
+                {msg.role === "user" ? (
+                  <p>{msg.content}</p>
+                ) : (
+                  <ReactMarkdown
+                    remarkPlugins={[remarkMath]}
+                    rehypePlugins={[rehypeKatex]}
+                    components={{
+                      h1: ({ children }) => <h1 className="text-base font-bold mt-2 mb-1">{children}</h1>,
+                      h2: ({ children }) => <h2 className="text-base font-bold mt-2 mb-1">{children}</h2>,
+                      h3: ({ children }) => <h3 className="text-sm font-bold mt-2 mb-1">{children}</h3>,
+                      p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
+                      ul: ({ children }) => <ul className="list-disc pl-4 mb-1.5 space-y-0.5">{children}</ul>,
+                      ol: ({ children }) => <ol className="list-decimal pl-4 mb-1.5 space-y-0.5">{children}</ol>,
+                      li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                      strong: ({ children }) => <strong className="font-bold text-blue-400">{children}</strong>,
+                      code: ({ children, className }) => {
+                        const isBlock = className?.includes("language-");
+                        return isBlock ? (
+                          <pre className="bg-black/30 rounded-lg p-2 my-1.5 overflow-x-auto text-xs"><code>{children}</code></pre>
+                        ) : (
+                          <code className="bg-black/20 px-1 py-0.5 rounded text-xs font-mono">{children}</code>
+                        );
+                      },
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
+                )}
               </div>
 
               {msg.role === "user" && (
