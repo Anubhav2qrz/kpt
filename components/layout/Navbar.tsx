@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -173,6 +173,24 @@ export function Navbar() {
 
           {/* Mobile Toggle */}
           <div className="md:hidden flex items-center gap-1 sm:gap-2">
+            
+            {/* Mobile Chat Bot Toggle */}
+            <button
+              onClick={toggleChat}
+              aria-label="Toggle AI Tutor Chat"
+              title="Open AI Tutor"
+              className="p-2 rounded-lg transition-all duration-200 relative flex items-center justify-center"
+              style={{
+                color: isChatOpen ? "rgb(96, 165, 250)" : "var(--kpt-muted)",
+                backgroundColor: "transparent",
+              }}
+            >
+              <AnimatedBot size="sm" />
+              <span className="absolute top-1 right-1 flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
+              </span>
+            </button>
 
             {/* Mobile Theme Toggle */}
             <button
@@ -229,6 +247,26 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+
+          {/* Mobile Menu AI Tutor Chat */}
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              toggleChat();
+            }}
+            className="flex items-center justify-between w-full px-4 py-3 rounded-lg text-sm font-medium my-1 transition-all hover:bg-white/5"
+            style={{ color: "var(--kpt-muted)" }}
+          >
+            <div className="flex items-center gap-2">
+              <AnimatedBot size="sm" />
+              <span>AI Tutor Chat</span>
+            </div>
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+            </span>
+          </button>
+
           <a
             href="https://wa.me/+919999999999"
             target="_blank"

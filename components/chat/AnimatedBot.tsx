@@ -4,7 +4,7 @@ import React from "react";
 
 interface AnimatedBotProps {
   className?: string;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
 }
 
 export function AnimatedBot({ className = "", size = "md" }: AnimatedBotProps) {
@@ -13,6 +13,9 @@ export function AnimatedBot({ className = "", size = "md" }: AnimatedBotProps) {
     md: "w-7 h-7",
     lg: "w-8 h-8",
     xl: "w-10 h-10",
+    "2xl": "w-16 h-16",
+    "3xl": "w-24 h-24",
+    "4xl": "w-32 h-32",
   };
 
   return (

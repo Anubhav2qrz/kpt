@@ -5,7 +5,6 @@ import { Footer } from "@/components/layout/Footer";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { ChatProvider } from "@/components/chat/ChatContext";
-import { FloatingChatButton } from "@/components/chat/FloatingChatButton";
 import { Inter, Outfit } from "next/font/google";
 
 const inter = Inter({
@@ -51,7 +50,6 @@ export default function RootLayout({
             <Navbar />
             <main>{children}</main>
             <Footer />
-            <FloatingChatButton />
             <Toaster position="top-right" richColors />
           </ChatProvider>
         </ThemeProvider>
