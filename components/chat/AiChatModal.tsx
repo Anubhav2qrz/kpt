@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { X, Send, Bot, User, Loader2, Paperclip, FileText, Sparkles, BookOpen } from "lucide-react";
+import { X, Send, User, Loader2, Paperclip, FileText, Sparkles, BookOpen } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import { useChatContext } from "./ChatContext";
+import { AnimatedBot } from "./AnimatedBot";
 
 type Message = {
   role: "user" | "model";
@@ -289,8 +290,8 @@ export function AiChatModal() {
         {/* Header */}
         <header className="flex items-center justify-between p-4 border-b border-[var(--kpt-border)] bg-[var(--kpt-surface)]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400">
-              <Bot className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-full bg-blue-600/10 flex items-center justify-center">
+              <AnimatedBot size="lg" />
             </div>
             <div>
               <h3 className="font-bold" style={{ color: "var(--kpt-text)" }}>KPT AI Tutor</h3>
@@ -355,8 +356,8 @@ export function AiChatModal() {
                   className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   {msg.role === "model" && (
-                    <div className="w-8 h-8 rounded-full bg-blue-600/20 flex-shrink-0 flex items-center justify-center text-blue-400">
-                      <Bot className="w-5 h-5" />
+                    <div className="w-8 h-8 rounded-full bg-blue-600/10 flex-shrink-0 flex items-center justify-center">
+                      <AnimatedBot size="md" />
                     </div>
                   )}
 
@@ -431,8 +432,8 @@ export function AiChatModal() {
 
               {isLoading && (
                 <div className="flex gap-3 justify-start">
-                  <div className="w-8 h-8 rounded-full bg-blue-600/20 flex-shrink-0 flex items-center justify-center text-blue-400">
-                    <Bot className="w-5 h-5" />
+                  <div className="w-8 h-8 rounded-full bg-blue-600/10 flex-shrink-0 flex items-center justify-center">
+                    <AnimatedBot size="md" />
                   </div>
                   <div className="bg-[var(--kpt-bg)] border border-[var(--kpt-border)] text-[var(--kpt-text)] rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin text-blue-400" />

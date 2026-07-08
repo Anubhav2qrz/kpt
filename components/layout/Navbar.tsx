@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, Sun, Moon, Bot } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { useChatContext } from "@/components/chat/ChatContext";
+import { AnimatedBot } from "@/components/chat/AnimatedBot";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -124,7 +125,7 @@ export function Navbar() {
               }}
             >
               <span className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-400/10 to-blue-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-              <Bot className="w-4 h-4" />
+              <AnimatedBot size="sm" />
               <span className="hidden lg:inline">AI Tutor</span>
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
@@ -182,7 +183,7 @@ export function Navbar() {
                 backgroundColor: isChatOpen ? "rgba(37, 99, 235, 0.12)" : "transparent",
               }}
             >
-              <Bot className="w-5 h-5" />
+              <AnimatedBot size="sm" />
             </button>
 
             {/* Mobile Theme Toggle */}
