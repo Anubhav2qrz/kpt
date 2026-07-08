@@ -173,18 +173,6 @@ export function Navbar() {
 
           {/* Mobile Toggle */}
           <div className="md:hidden flex items-center gap-1 sm:gap-2">
-            {/* Mobile AI Tutor */}
-            <button
-              onClick={toggleChat}
-              aria-label="Toggle AI Tutor Chat"
-              className="p-2 rounded-lg transition-all duration-200"
-              style={{
-                color: isChatOpen ? "rgb(96, 165, 250)" : "var(--kpt-muted)",
-                backgroundColor: isChatOpen ? "rgba(37, 99, 235, 0.12)" : "transparent",
-              }}
-            >
-              <AnimatedBot size="sm" />
-            </button>
 
             {/* Mobile Theme Toggle */}
             <button
