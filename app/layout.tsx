@@ -43,6 +43,7 @@ export default function RootLayout({
       <body
         className="min-h-screen antialiased"
         style={{ backgroundColor: "var(--kpt-bg)", color: "var(--kpt-text)" }}
+        suppressHydrationWarning
       >
         <ThemeProvider>
           <ChatProvider>
