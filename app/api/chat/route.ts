@@ -7,6 +7,14 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 // Max number of history messages to send (keeps token usage bounded)
 const MAX_HISTORY_MESSAGES = 10;
 
+// Gemini models list tried in order of preference
+const GEMINI_MODELS = [
+  "gemini-3.5-flash",
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+];
+
 // Retry config for rate-limit (429) errors on Gemini
 const MAX_RETRIES = 2;
 const BASE_DELAY_MS = 1500;
@@ -212,10 +220,22 @@ export async function POST(req: NextRequest) {
     }
 
     // Format history for Gemini
-    let geminiHistory = trimmedHistory.map((msg: any) => ({
-      role: msg.role === "user" ? "user" : "model",
-      parts: [{ text: msg.content }],
-    }));
+    let geminiHistory = trimmedHistory.map((msg: any) => {
+      const parts: any[] = [];
+      if (msg.fileData && msg.fileData.base64 && msg.fileData.mimeType) {
+        parts.push({
+          inlineData: {
+            mimeType: msg.fileData.mimeType,
+            data: msg.fileData.base64,
+          },
+        });
+      }
+      parts.push({ text: msg.content });
+      return {
+        role: msg.role === "user" ? "user" : "model",
+        parts: parts,
+      };
+    });
 
     // Gemini requires history to start with 'user' role
     while (geminiHistory.length > 0 && geminiHistory[0].role === "model") {
@@ -225,43 +245,25 @@ export async function POST(req: NextRequest) {
     // Build the current message parts (text + optional image)
     const currentParts = buildGeminiParts(message || "", validatedImage);
 
-    // ── 1. Try Gemini 2.5 Flash (primary) ──
+    // Try Gemini models in order of preference
     if (process.env.GEMINI_API_KEY) {
-      try {
-        console.log("Trying Gemini 2.5 Flash...");
-        const model = genAI.getGenerativeModel({
-          model: "gemini-2.5-flash",
-          systemInstruction: systemPrompt,
-        });
+      for (const modelName of GEMINI_MODELS) {
+        try {
+          console.log(`Trying ${modelName}...`);
+          const model = genAI.getGenerativeModel({
+            model: modelName,
+            systemInstruction: systemPrompt,
+          });
 
-        const chat = model.startChat({ history: geminiHistory });
-        const result = await chat.sendMessage(currentParts);
-        const response = await result.response;
-        const text = response.text();
+          const chat = model.startChat({ history: geminiHistory });
+          const result = await chat.sendMessage(currentParts);
+          const response = await result.response;
+          const text = response.text();
 
-        return NextResponse.json({ text, provider: "gemini-2.5-flash" });
-      } catch (error: any) {
-        console.warn("Gemini 2.5 Flash failed:", error.message);
-      }
-    }
-
-    // ── 2. Try Gemini 2.0 Flash (2nd fallback — faster, higher quota) ──
-    if (process.env.GEMINI_API_KEY) {
-      try {
-        console.log("Falling back to Gemini 2.0 Flash...");
-        const model = genAI.getGenerativeModel({
-          model: "gemini-2.0-flash",
-          systemInstruction: systemPrompt,
-        });
-
-        const chat = model.startChat({ history: geminiHistory });
-        const result = await chat.sendMessage(currentParts);
-        const response = await result.response;
-        const text = response.text();
-
-        return NextResponse.json({ text, provider: "gemini-2.0-flash" });
-      } catch (error: any) {
-        console.warn("Gemini 2.0 Flash also failed:", error.message);
+          return NextResponse.json({ text, provider: modelName });
+        } catch (error: any) {
+          console.warn(`${modelName} failed:`, error.message);
+        }
       }
     }
 

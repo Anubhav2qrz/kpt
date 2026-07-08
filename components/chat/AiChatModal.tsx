@@ -12,6 +12,11 @@ type Message = {
   role: "user" | "model";
   content: string;
   imagePreview?: string;
+  fileData?: {
+    base64: string;
+    mimeType: string;
+    name: string;
+  };
 };
 
 const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4 MB
@@ -22,6 +27,15 @@ const ACCEPTED_TYPES = [
   "image/gif",
   "application/pdf",
 ];
+
+const MIME_TYPE_MAP: Record<string, string> = {
+  "jpg": "image/jpeg",
+  "jpeg": "image/jpeg",
+  "png": "image/png",
+  "webp": "image/webp",
+  "gif": "image/gif",
+  "pdf": "application/pdf",
+};
 
 const SUGGESTED_PROMPTS = [
   "Explain Newton's Laws of Motion in simple terms.",
@@ -95,7 +109,16 @@ export function AiChatModal() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!ACCEPTED_TYPES.includes(file.type)) {
+    let detectedType = file.type;
+    // Fix for empty or generic MIME types (common on some Windows registry setups)
+    if (!detectedType || detectedType === "application/octet-stream") {
+      const ext = file.name.split(".").pop()?.toLowerCase();
+      if (ext && MIME_TYPE_MAP[ext]) {
+        detectedType = MIME_TYPE_MAP[ext];
+      }
+    }
+
+    if (!ACCEPTED_TYPES.includes(detectedType)) {
       setFileError("Unsupported file. Use JPEG, PNG, WebP, GIF, or PDF.");
       e.target.value = "";
       return;
@@ -107,7 +130,12 @@ export function AiChatModal() {
       return;
     }
 
-    setAttachedFile(file);
+    // Create a new File object with the detected type if it differed
+    const fileToAttach = (detectedType !== file.type)
+      ? new File([file], file.name, { type: detectedType })
+      : file;
+
+    setAttachedFile(fileToAttach);
     setFileError(null);
   };
 
@@ -158,31 +186,64 @@ export function AiChatModal() {
         : userMsg;
     }
 
+    // Convert file to base64 if present
+    let currentFileData = undefined;
+    if (currentFile) {
+      try {
+        const base64 = await fileToBase64(currentFile);
+        currentFileData = {
+          base64,
+          mimeType: currentFile.type,
+          name: currentFile.name,
+        };
+      } catch (err) {
+        console.error("Failed to read file:", err);
+      }
+    }
+
     const newMessages: Message[] = [
       ...messages,
       {
         role: "user",
         content: displayContent,
         imagePreview: currentFile?.type.startsWith("image/") ? currentPreview || undefined : undefined,
+        fileData: currentFileData,
       },
     ];
     setMessages(newMessages);
     setIsLoading(true);
 
     try {
+      // Build history and only preserve the most recent file's base64 to prevent exceeding payload limits (under 4.5MB)
+      const formattedHistory = newMessages.slice(1, -1).slice(-10).map((m) => ({
+        role: m.role === "user" ? "user" : "assistant",
+        content: m.content,
+        fileData: m.fileData,
+      }));
+
+      let foundRecentFile = currentFileData !== undefined;
+      for (let i = formattedHistory.length - 1; i >= 0; i--) {
+        if (formattedHistory[i].fileData) {
+          if (!foundRecentFile) {
+            foundRecentFile = true;
+          } else {
+            // Keep content and type but strip large base64 payload from older history turns
+            formattedHistory[i].fileData = undefined;
+          }
+        }
+      }
+
       const body: any = {
-        history: messages.slice(1).slice(-10).map((m) => ({
-          role: m.role === "user" ? "user" : "assistant",
-          content: m.content,
-        })),
-        message: userMsg || "Please analyze this image and help me with any problems or questions shown.",
+        history: formattedHistory,
+        message: userMsg || (currentFile?.type === "application/pdf"
+          ? "Please analyze this document and help me with any problems or questions shown."
+          : "Please analyze this image and help me with any problems or questions shown."),
       };
 
-      if (currentFile) {
-        const base64 = await fileToBase64(currentFile);
+      if (currentFileData) {
         body.image = {
-          base64,
-          mimeType: currentFile.type,
+          base64: currentFileData.base64,
+          mimeType: currentFileData.mimeType,
         };
       }
 
